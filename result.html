@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Quote Summary</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f9fa;
+            margin: 0;
+            padding: 20px;
+        }
+        .header {
+            background-color: #1f4e79;
+            padding: 15px;
+            text-align: center;
+        }
+        .header img {
+            height: 60px;
+        }
+        .container {
+            max-width: 800px;
+            margin: auto;
+        }
+        .section-card {
+            background-color: #ffffff;
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 30px;
+            border-left: 6px solid #1f4e79;
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.05);
+        }
+        .section-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #1f4e79;
+            border-bottom: 2px dashed #e0e0e0;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+        .label-bold {
+            font-weight: 600;
+            color: #333;
+        }
+        .value-bold {
+            font-weight: bold;
+            color: #000;
+        }
+        .usp-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 15px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        .usp-item:last-child {
+            border-bottom: none;
+        }
+        .premium-box {
+            background-color: #f0f9ff;
+            border-left: 6px solid #28a745;
+        }
+        .discount-alert {
+            background-color: #fff3cd;
+            border-left: 6px solid #ffc107;
+            padding: 10px 15px;
+            border-radius: 5px;
+            margin-top: 15px;
+            font-weight: bold;
+            color: #856404;
+        }
+        .final-premium {
+            font-size: 18px;
+            background: #ffffff;
+            border: 1px solid #28a745;
+            padding: 10px;
+            margin-top: 10px;
+            border-radius: 5px;
+            color: #28a745;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Logo Header -->
+    <div class="header">
+        <img src="data:image/png;base64,{{ logo_base64 }}" alt="Company Logo">
+    </div>
+
+    <div class="container">
+
+        <!-- Doctor Info -->
+        <div class="section-card">
+            <div class="section-title">👨‍⚕️ Doctor Details</div>
+            <p><span class="label-bold">Name:</span> <span class="value-bold">{{ name }}</span></p>
+            <p><span class="label-bold">Mobile Number:</span> <span class="value-bold">{{ mobile }}</span></p>
+            <p><span class="label-bold">Specialization:</span> <span class="value-bold">{{ specialization }}</span></p>
+            <p><span class="label-bold">Age:</span> <span class="value-bold">{{ age }}</span></p>
+            <p><span class="label-bold">Pre-Existing Disease (PED):</span> <span class="value-bold">{{ ped }}</span></p>
+        </div>
+
+        <!-- Insurance Info -->
+        <div class="section-card">
+            <div class="section-title">🏢 Insurance Details</div>
+            <p><span class="label-bold">Insurance Company:</span> <span class="value-bold">{{ company }}</span></p>
+            <p><span class="label-bold">Selected Product:</span> <span class="value-bold">{{ product }}</span></p>
+        </div>
+
+        <!-- USP Coverage -->
+        <div class="section-card">
+            <div class="section-title">🛡️ You Cover the Following</div>
+            {% for index, row in usps.iterrows() %}
+            <div class="usp-item">
+                <span class="label-bold">{{ row['USP'] }}</span>
+                <span class="value-bold">{{ row[product] }}</span>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Premium Section -->
+        <div class="section-card premium-box">
+            <div class="section-title">💰 Premium Summary</div>
+            <p><span class="label-bold">Original Premium:</span> <span class="value-bold">₹{{ premium }}</span></p>
+            {% if discount > 0 %}
+            <p><span class="label-bold">Discount:</span> <span class="value-bold">₹{{ discount }}</span></p>
+            {% endif %}
+            <div class="final-premium">Final Premium: ₹{{ final_premium }}</div>
+
+            {% if discount > 0 %}
+            <div class="discount-alert">
+                🎉 Great deal! You saved ₹{{ discount }} on your insurance plan!
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    <!-- Download PDF Button -->
+<form action="/download" method="get" style="text-align: center; margin-top: 20px;">
+    <button type="submit" class="btn btn-primary">
+        📥 Download Quote Summary (PDF)
+    </button>
+</form>
+</body>
+</html>
