@@ -1,5 +1,5 @@
 import base64
-import pdfkit
+from weasyprint import HTML
 from flask import Flask, render_template, request, send_file, redirect, url_for
 import pandas as pd
 import io
