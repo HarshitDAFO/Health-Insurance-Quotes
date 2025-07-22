@@ -3,4 +3,4 @@ pandas
 pdfkit
 openpyxl
 gunicorn
-weasyprint
+WeasyPrint==60.2
