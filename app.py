@@ -1,8 +1,8 @@
 import base64
-from weasyprint import HTML
 from flask import Flask, render_template, request, send_file, redirect, url_for
 import pandas as pd
 import io
+import pdfkit
 
 app = Flask(__name__)
 
@@ -35,17 +35,33 @@ def submit():
     specialization = data['specialization']
     age = data['age']
     ped = data['ped']
+    ped_detail = data.get('ped_detail', '')
     product = data['product']
     company = product_company.get(product, "Unknown")
-    premium = float(data['premium'])
-    discount = float(data['discount'])
-    final_premium = premium - discount
+
+    premium_1y = float(data['premium_1y'])
+    premium_2y = float(data['premium_2y'])
+    premium_3y = float(data['premium_3y'])
+
+    discount_1y = float(data['discount_1y'])
+    discount_2y = float(data['discount_2y'])
+    discount_3y = float(data['discount_3y'])
+
+    final_1y = premium_1y - discount_1y
+    final_2y = premium_2y - discount_2y
+    final_3y = premium_3y - discount_3y
 
     usps = usp_df[['USP', product]].dropna()
 
-    # Encode logo once and pass to both result and PDF
+    # Load images as base64
     with open("static/logo.png", "rb") as logo_file:
         logo_base64 = base64.b64encode(logo_file.read()).decode("utf-8")
+
+    with open("static/why-choose-coveryou.png", "rb") as file1:
+        why_choose_base64 = base64.b64encode(file1.read()).decode("utf-8")
+
+    with open("static/10-reasons-coveryou.png", "rb") as file2:
+        ten_reasons_base64 = base64.b64encode(file2.read()).decode("utf-8")
 
     submitted_data = {
         "name": name,
@@ -53,16 +69,25 @@ def submit():
         "specialization": specialization,
         "age": age,
         "ped": ped,
+        "ped_detail": ped_detail,
         "product": product,
         "company": company,
-        "premium": premium,
-        "discount": discount,
-        "final_premium": final_premium,
         "usps": usps,
-        "logo_base64": logo_base64
+        "logo_base64": logo_base64,
+        "why_choose_base64": why_choose_base64,
+        "ten_reasons_base64": ten_reasons_base64,
+        "premium_1y": premium_1y,
+        "premium_2y": premium_2y,
+        "premium_3y": premium_3y,
+        "discount_1y": discount_1y,
+        "discount_2y": discount_2y,
+        "discount_3y": discount_3y,
+        "final_1y": final_1y,
+        "final_2y": final_2y,
+        "final_3y": final_3y
     }
 
-    return render_template('result.html', **submitted_data)
+    return render_template("result.html", **submitted_data)
 
 @app.route('/download')
 def download_pdf():
@@ -70,8 +95,7 @@ def download_pdf():
     if not submitted_data:
         return redirect(url_for('form'))
 
-    rendered_html = render_template('result_pdf.html', **submitted_data)
-
+    rendered_html = render_template('result.html', **submitted_data)
     config = pdfkit.configuration(wkhtmltopdf='C:\\Program Files\\wkhtmltopdf\\bin\\wkhtmltopdf.exe')
     pdf = pdfkit.from_string(rendered_html, False, configuration=config)
 
