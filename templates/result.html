@@ -2,18 +2,23 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Quote Summary</title>
+    <title>Health Quote Summary</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #f8f9fa;
+            background-color: #8a98cf;
             margin: 0;
-            padding: 20px;
+            padding: 0;
+            background-image: url("data:image/png;base64,{{ logo_base64 }}");
+            background-repeat: repeat;
+            background-position: center;
+            background-size: 200px;
+            opacity: 1;
         }
         .header {
             background-color: #1f4e79;
-            padding: 15px;
             text-align: center;
+            padding: 15px;
         }
         .header img {
             height: 60px;
@@ -21,14 +26,17 @@
         .container {
             max-width: 800px;
             margin: auto;
+            background: transparent;
+            padding: 30px;
+            border-radius: 10px;
         }
         .section-card {
-            background-color: #ffffff;
+            background-color: rgba(255, 255, 255, 0.88);
             border-radius: 10px;
             padding: 25px;
             margin-bottom: 30px;
             border-left: 6px solid #1f4e79;
-            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
         }
         .section-title {
             font-size: 20px;
@@ -49,34 +57,47 @@
         .usp-item {
             display: flex;
             justify-content: space-between;
-            padding: 10px 15px;
+            padding: 8px 12px;
             border-bottom: 1px solid #f0f0f0;
         }
         .usp-item:last-child {
             border-bottom: none;
         }
         .premium-box {
-            background-color: #f0f9ff;
+            background-color: rgba(240, 249, 255, 0.9);
             border-left: 6px solid #28a745;
+        }
+        .final-premium {
+            font-size: 1.1rem;
+            color: green;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 10px;
+            border: 2px dashed green;
+            font-weight: bold;
+            text-align: center;
+            border-radius: 5px;
+            margin-bottom: 10px;
         }
         .discount-alert {
             background-color: #fff3cd;
             border-left: 6px solid #ffc107;
             padding: 10px 15px;
             border-radius: 5px;
-            margin-top: 15px;
             font-weight: bold;
             color: #856404;
         }
-        .final-premium {
-            font-size: 18px;
-            background: #ffffff;
-            border: 1px solid #28a745;
-            padding: 10px;
-            margin-top: 10px;
+        .note-line {
+            font-weight: 600;
+            font-size: 0.95rem;
+            color: #0c5460;
+            background: #bce4ea;
+            border-left: 5px solid #17a2b8;
+            padding: 10px 15px;
             border-radius: 5px;
-            color: #28a745;
-            font-weight: bold;
+            margin-top: 15px;
+        }
+        .year-summary {
+            margin-bottom: 20px;
         }
     </style>
 </head>
@@ -97,6 +118,9 @@
             <p><span class="label-bold">Specialization:</span> <span class="value-bold">{{ specialization }}</span></p>
             <p><span class="label-bold">Age:</span> <span class="value-bold">{{ age }}</span></p>
             <p><span class="label-bold">Pre-Existing Disease (PED):</span> <span class="value-bold">{{ ped }}</span></p>
+            {% if ped == 'Yes' and ped_detail %}
+            <p><span class="label-bold">PED Details:</span> <span class="value-bold">{{ ped_detail }}</span></p>
+            {% endif %}
         </div>
 
         <!-- Insurance Info -->
@@ -117,27 +141,50 @@
             {% endfor %}
         </div>
 
-        <!-- Premium Section -->
+        <!-- Premium Summary -->
         <div class="section-card premium-box">
             <div class="section-title">💰 Premium Summary</div>
-            <p><span class="label-bold">Original Premium:</span> <span class="value-bold">₹{{ premium }}</span></p>
-            {% if discount > 0 %}
-            <p><span class="label-bold">Discount:</span> <span class="value-bold">₹{{ discount }}</span></p>
-            {% endif %}
-            <div class="final-premium">Final Premium: ₹{{ final_premium }}</div>
 
-            {% if discount > 0 %}
-            <div class="discount-alert">
-                🎉 Great deal! You saved ₹{{ discount }} on your insurance plan!
+            <div class="year-summary">
+                <p><span class="label-bold">1 Year Premium:</span> ₹{{ premium_1y }} &nbsp;
+                   <span class="label-bold">Discount:</span> ₹{{ discount_1y }}</p>
+                <div class="final-premium">✅ Final: ₹{{ final_1y }}</div>
             </div>
-            {% endif %}
+            <div class="year-summary">
+                <p><span class="label-bold">2 Years Premium:</span> ₹{{ premium_2y }} &nbsp;
+                   <span class="label-bold">Discount:</span> ₹{{ discount_2y }}</p>
+                <div class="final-premium">✅ Final: ₹{{ final_2y }}</div>
+            </div>
+            <div class="year-summary">
+                <p><span class="label-bold">3 Years Premium:</span> ₹{{ premium_3y }} &nbsp;
+                   <span class="label-bold">Discount:</span> ₹{{ discount_3y }}</p>
+                <div class="final-premium">✅ Final: ₹{{ final_3y }}</div>
+            </div>
+
+            <div class="note-line">
+                ✨ Each year gives you the opportunity to maximize benefits and save more!
+            </div>
         </div>
+
+        <!-- Download PDF Button -->
+        <form action="/download" method="get" style="text-align: center; margin-top: 20px;">
+            <button type="submit" class="btn btn-primary">
+                📥 Download Quote Summary (PDF)
+            </button>
+        </form>
     </div>
-    <!-- Download PDF Button -->
-<form action="/download" method="get" style="text-align: center; margin-top: 20px;">
-    <button type="submit" class="btn btn-primary">
-        📥 Download Quote Summary (PDF)
-    </button>
-</form>
+
+    <!-- Additional Pages with base64 images -->
+
+    <div style="page-break-before: always;"></div>
+    <div style="text-align: center; padding: 30px;">
+        <img src="data:image/png;base64,{{ why_choose_base64 }}" alt="Why Choose CoverYou" style="max-width: 100%; height: auto;">
+    </div>
+
+    <div style="page-break-before: always;"></div>
+    <div style="text-align: center; padding: 30px;">
+        <img src="data:image/png;base64,{{ ten_reasons_base64 }}" alt="10 Reasons to Choose CoverYou" style="max-width: 100%; height: auto;">
+    </div>
+
 </body>
 </html>
