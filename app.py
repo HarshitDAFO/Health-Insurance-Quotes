@@ -96,7 +96,7 @@ def download_pdf():
         return redirect(url_for('form'))
 
     rendered_html = render_template('result.html', **submitted_data)
-    config = pdfkit.configuration(wkhtmltopdf='C:\\Program Files\\wkhtmltopdf\\bin\\wkhtmltopdf.exe')
+    config = pdfkit.configuration(wkhtmltopdf='/usr/bin/wkhtmltopdf')
     pdf = pdfkit.from_string(rendered_html, False, configuration=config)
 
     return send_file(io.BytesIO(pdf), download_name="Health_Quote_Summary.pdf", as_attachment=True)
